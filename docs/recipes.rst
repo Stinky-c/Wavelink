@@ -6,8 +6,8 @@ This is not an exhaustive list, for more detailed examples, see: `GitHub Example
 
 Listening to Events
 -------------------
-WaveLink 1.0 makes use of the built in event dispatcher of Discord.py.
-This means you can listen to WaveLink events the same way you listen to discord.py events.
+WaveLink 1.0 makes use of the built in event dispatcher of Disnake.
+This means you can listen to WaveLink events the same way you listen to Disnake events.
 
 *All WaveLink events are prefixed with `on_wavelink_`*
 
@@ -115,7 +115,7 @@ The way you search for tracks in WaveLink 1.0 is different. Below are some commo
     tracks = await wavelink.SoundCloudTrack.search(query=...)
 
 
-**As a Discord.py converter:**
+**As a Disnake converter:**
 
 .. code:: python3
 
@@ -174,7 +174,7 @@ This behaviour allows queuing large amounts of tracks without querying the REST 
 
 Creating Players and VoiceProtocol
 ----------------------------------
-WaveLink 1.0 was reworked to revolve around Discord.py's new VoiceProtocol. What this means is that accessing your `Player` instance,
+WaveLink 1.0 was reworked to revolve around Disnake's new VoiceProtocol. What this means is that accessing your `Player` instance,
 is easier and more intuitive. Below are some common examples of how to use the new VoiceProtocol with WaveLink.
 
 
@@ -182,10 +182,10 @@ is easier and more intuitive. Below are some common examples of how to use the n
 
 .. code:: python3
 
-    import discord
+    import disnake
     import wavelink
 
-    from discord.ext import commands
+    from disnake.ext import commands
 
 
     @commands.command()
@@ -207,10 +207,10 @@ is easier and more intuitive. Below are some common examples of how to use the n
 
 .. code:: python3
 
-    import discord
+    import disnake
     import wavelink
 
-    from discord.ext import commands
+    from disnake.ext import commands
 
 
     class Player(wavelink.Player):

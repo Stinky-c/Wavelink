@@ -7,7 +7,7 @@ Event Reference
 WaveLink Events are events dispatched when certain events happen in Lavalink and Wavelink.
 All events must be coroutines.
 
-Events are dispatched via discord.py and as such can be used with listener syntax.
+Events are dispatched via Disnake and as such can be used with listener syntax.
 
 **For example:**
 

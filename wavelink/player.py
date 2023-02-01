@@ -26,8 +26,7 @@ import datetime
 import logging
 from typing import Any, Dict, Union, Optional
 
-import discord
-from discord.channel import VoiceChannel
+import disnake
 
 from . import abc
 from .pool import Node, NodePool
@@ -44,14 +43,14 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 VoiceChannel = Union[
-    discord.VoiceChannel, discord.StageChannel
+    disnake.VoiceChannel, disnake.StageChannel
 ]  # todo: VocalGuildChannel?
 
 
-class Player(discord.VoiceProtocol):
+class Player(disnake.VoiceProtocol):
     """WaveLink Player object.
 
-    This class subclasses :class:`discord.VoiceProtocol` and such should be treated as one with additions.
+    This class subclasses :class:`disnake.VoiceProtocol` and such should be treated as one with additions.
 
     Examples
     --------
@@ -59,30 +58,30 @@ class Player(discord.VoiceProtocol):
         .. code::
 
             @commands.command()
-            async def connect(self, channel: discord.VoiceChannel):
+            async def connect(self, channel: disnake.VoiceChannel):
 
                 voice_client = await channel.connect(cls=wavelink.Player)
 
 
     .. warning::
         This class should not be created manually but can be subclassed to add additional functionality.
-        You should instead use :meth:`discord.VoiceChannel.connect()` and pass the player object to the cls kwarg.
+        You should instead use :meth:`disnake.VoiceChannel.connect()` and pass the player object to the cls kwarg.
     """
 
-    def __call__(self, client: discord.Client, channel: VoiceChannel):
-        self.client: discord.Client = client
+    def __call__(self, client: disnake.Client, channel: VoiceChannel):
+        self.client: disnake.Client = client
         self.channel: VoiceChannel = channel
 
         return self
 
     def __init__(
         self,
-        client: discord.Client = MISSING,
+        client: disnake.Client = MISSING,
         channel: VoiceChannel = MISSING,
         *,
         node: Node = MISSING,
     ):
-        self.client: discord.Client = client
+        self.client: disnake.Client = client
         self.channel: VoiceChannel = channel
 
         if node is MISSING:
@@ -105,13 +104,13 @@ class Player(discord.VoiceProtocol):
         self.queue = WaitQueue()
 
     @property
-    def guild(self) -> discord.Guild:
-        """The :class:`discord.Guild` this :class:`Player` is in."""
+    def guild(self) -> disnake.Guild:
+        """The :class:`disnake.Guild` this :class:`Player` is in."""
         return self.channel.guild
 
     @property
-    def user(self) -> discord.ClientUser:
-        """The :class:`discord.ClientUser` of the :class:`discord.Client`"""
+    def user(self) -> disnake.ClientUser:
+        """The :class:`disnake.ClientUser` of the :class:`disnake.Client`"""
         return self.client.user  # type: ignore
 
     @property
@@ -198,14 +197,14 @@ class Player(discord.VoiceProtocol):
 
             self.cleanup()
 
-    async def move_to(self, channel: discord.VoiceChannel) -> None:
+    async def move_to(self, channel: disnake.VoiceChannel) -> None:
         """|coro|
 
         Moves the player to a different voice channel.
 
         Parameters
         -----------
-        channel: :class:`discord.VoiceChannel`
+        channel: :class:`disnake.VoiceChannel`
             The channel to move to. Must be a voice channel.
         """
         await self.guild.change_voice_state(channel=channel)
@@ -345,9 +344,7 @@ class Player(discord.VoiceProtocol):
         self._volume = max(min(volume, 1000), 0)
 
         await self.node._websocket.send(
-            op="volume",
-            guildId=str(self.guild.id),
-            volume=self.volume
+            op="volume", guildId=str(self.guild.id), volume=self.volume
         )
         logger.debug(f"Set volume:: {self.volume} ({self.channel.id})")
 
@@ -365,12 +362,7 @@ class Player(discord.VoiceProtocol):
             op="seek", guildId=str(self.guild.id), position=position
         )
 
-    async def set_filter(
-        self,
-        _filter: Filter,
-        /, *,
-        seek: bool = False
-    ) -> None:
+    async def set_filter(self, _filter: Filter, /, *, seek: bool = False) -> None:
         """|coro|
 
         Set the player's filter.
@@ -387,9 +379,7 @@ class Player(discord.VoiceProtocol):
         self._filter = _filter
 
         await self.node._websocket.send(
-            op="filters",
-            guildId=str(self.guild.id),
-            **_filter._payload
+            op="filters", guildId=str(self.guild.id), **_filter._payload
         )
         logger.debug(f"Set filter:: {self._filter} ({self.channel.id})")
 

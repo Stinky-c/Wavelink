@@ -35,9 +35,9 @@ from typing import (
 )
 
 import yarl
-from discord.ext import commands
+from disnake.ext import commands
 
-from .abc import *
+from .abc import Searchable, Playable, Playlist
 from .pool import Node, NodePool
 from .utils import MISSING
 
@@ -53,7 +53,7 @@ __all__ = (
     "SoundCloudTrack",
     "YouTubePlaylist",
     "PartialTrack",
-    "LocalTrack"
+    "LocalTrack",
 )
 
 ST = TypeVar("ST", bound="SearchableTrack")
@@ -84,7 +84,7 @@ class Track(Playable):
 
     def __init__(self, id: str, info: dict):
         super().__init__(id, info)
-        self.title: str = info.get('title')
+        self.title: str = info.get("title")
         self.identifier: Optional[str] = info.get("identifier")
         self.uri: Optional[str] = info.get("uri")
         self.author: Optional[str] = info.get("author")
@@ -107,24 +107,24 @@ class SearchableTrack(Track, Searchable):
     @overload
     @classmethod
     async def search(
-            cls: Type[ST],
-            query: str,
-            *,
-            node: Node = ...,
-            type: spotify.SpotifySearchType = ...,
-            return_first: Literal[False] = ...,
+        cls: Type[ST],
+        query: str,
+        *,
+        node: Node = ...,
+        type: spotify.SpotifySearchType = ...,
+        return_first: Literal[False] = ...,
     ) -> List[ST]:
         ...
 
     @overload
     @classmethod
     async def search(
-            cls: Type[ST],
-            query: str,
-            *,
-            node: Node = ...,
-            type: spotify.SpotifySearchType = ...,
-            return_first: Literal[True] = ...,
+        cls: Type[ST],
+        query: str,
+        *,
+        node: Node = ...,
+        type: spotify.SpotifySearchType = ...,
+        return_first: Literal[True] = ...,
     ) -> Optional[ST]:
         ...
 
@@ -153,11 +153,11 @@ class SearchableTrack(Track, Searchable):
     @classmethod
     async def search(
         cls: Type[ST],
-            query: str,
-            *,
-            type: spotify.SpotifySearchType = None,
-            node: Node = MISSING,
-            return_first: bool = False
+        query: str,
+        *,
+        type: spotify.SpotifySearchType = None,
+        node: Node = MISSING,
+        return_first: bool = False,
     ) -> Union[Optional[ST], List[ST]]:
         """|coro|
 
@@ -184,11 +184,15 @@ class SearchableTrack(Track, Searchable):
 
         check = yarl.URL(query)
 
-        if str(check.host) == 'youtube.com' or str(check.host) == 'www.youtube.com' and check.query.get("list") or \
-                cls._search_type == 'ytpl':
+        if (
+            str(check.host) == "youtube.com"
+            or str(check.host) == "www.youtube.com"
+            and check.query.get("list")
+            or cls._search_type == "ytpl"
+        ):
 
             tracks = await node.get_playlist(cls=YouTubePlaylist, identifier=query)
-        elif cls._search_type == 'local':
+        elif cls._search_type == "local":
             tracks = await node.get_tracks(cls, query)
         else:
             tracks = await node.get_tracks(cls, f"{cls._search_type}:{query}")
@@ -202,10 +206,10 @@ class SearchableTrack(Track, Searchable):
     async def convert(cls: Type[ST], ctx: commands.Context, argument: str) -> ST:
         """Converter which searches for and returns the first track.
 
-        Used as a type hint in a discord.py command.
+        Used as a type hint in a Disnake command.
         """
-        if argument.startswith('local:'):
-            argument.replace('local:', '')
+        if argument.startswith("local:"):
+            argument.replace("local:", "")
 
         results = await cls.search(argument)
 
@@ -277,7 +281,7 @@ class YouTubePlaylist(SearchableTrack, Playlist):
 class LocalTrack(SearchableTrack):
     """Represents a Lavalinkl Local Track Object."""
 
-    _search_type: ClassVar[str] = 'local'
+    _search_type: ClassVar[str] = "local"
 
 
 class PartialTrack(Searchable, Playable):
@@ -299,18 +303,22 @@ class PartialTrack(Searchable, Playable):
         Full track information will be missing until it has been searched.
     """
 
-    def __init__(self,
-                 *,
-                 query: str,
-                 node: Optional[Node] = MISSING,
-                 cls: Optional[SearchableTrack] = YouTubeTrack):
+    def __init__(
+        self,
+        *,
+        query: str,
+        node: Optional[Node] = MISSING,
+        cls: Optional[SearchableTrack] = YouTubeTrack,
+    ):
         self.query = query
         self.title = query
         self._node = node
         self._cls = cls
 
         if not issubclass(cls, SearchableTrack):
-            raise TypeError(f"cls parameter must be of type {SearchableTrack!r} not {cls!r}")
+            raise TypeError(
+                f"cls parameter must be of type {SearchableTrack!r} not {cls!r}"
+            )
 
     async def _search(self):
         node = self._node

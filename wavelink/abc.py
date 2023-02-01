@@ -81,7 +81,7 @@ class Searchable(metaclass=abc.ABCMeta):
         query: str,
         *,
         node: Node = ...,
-        return_first: Literal[True] = ...
+        return_first: Literal[True] = ...,
     ) -> Optional[ST]:
         ...
 
@@ -93,7 +93,7 @@ class Searchable(metaclass=abc.ABCMeta):
         query: str,
         *,
         node: Node = ...,
-        return_first: Literal[False] = ...
+        return_first: Literal[False] = ...,
     ) -> List[ST]:
         ...
 

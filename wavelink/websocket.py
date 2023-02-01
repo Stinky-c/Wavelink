@@ -58,7 +58,7 @@ class Websocket:
             "Authorization": self.node._password,
             "User-Id": str(self.node.bot.user.id),
             "Client-Name": "WaveLink",
-            'Resume-Key': self.node.resume_key
+            "Resume-Key": self.node.resume_key,
         }
 
     def is_connected(self) -> bool:
@@ -98,7 +98,7 @@ class Websocket:
             resume = {
                 "op": "configureResuming",
                 "key": f"{self.node.resume_key}",
-                "timeout": 60
+                "timeout": 60,
             }
             await self.send(**resume)
 
@@ -126,8 +126,10 @@ class Websocket:
                 if msg.data == 1011:
                     # Lavalink encountered an internal error which can not be fixed...
                     # Consider updating Lavalink...
-                    logger.error('Internal Lavalink Error encountered. Terminating WaveLink without retries.'
-                                 'Consider updating your Lavalink Server.')
+                    logger.error(
+                        "Internal Lavalink Error encountered. Terminating WaveLink without retries."
+                        "Consider updating your Lavalink Server."
+                    )
 
                     self.listener.cancel()
                     return
@@ -144,19 +146,20 @@ class Websocket:
             return
 
         try:
-            player = self.node.get_player(self.node.bot.get_guild(
-                int(data["guildId"])))  # type: ignore
+            player = self.node.get_player(
+                self.node.bot.get_guild(int(data["guildId"]))
+            )  # type: ignore
         except KeyError:
             return
 
         if player is None:
             return
 
-        if op == 'event':
-            event, payload = await self._get_event_payload(data['type'], data)
-            logger.debug(f'op: event:: {data}')
-            
-            if event == 'track_end' and payload.get('reason') != 'REPLACED':
+        if op == "event":
+            event, payload = await self._get_event_payload(data["type"], data)
+            logger.debug(f"op: event:: {data}")
+
+            if event == "track_end" and payload.get("reason") != "REPLACED":
                 player._source = None
 
             self.dispatch(event, player, **payload)
@@ -180,7 +183,7 @@ class Websocket:
             payload["code"] = data.get("code")
 
         if name.startswith("Track"):
-            base64_ = data.get('track')
+            base64_ = data.get("track")
             track = await self.node.build_track(cls=wavelink.Track, identifier=base64_)
 
             payload["track"] = track

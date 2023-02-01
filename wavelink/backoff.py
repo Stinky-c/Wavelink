@@ -39,7 +39,13 @@ class Backoff:
         The amount of times to backoff before resetting. Defaults to 5. If set to None, backoff will run indefinitely.
     """
 
-    def __init__(self, *, base: int = 1, maximum_time: float = 30.0, maximum_tries: Optional[int] = 5):
+    def __init__(
+        self,
+        *,
+        base: int = 1,
+        maximum_time: float = 30.0,
+        maximum_tries: Optional[int] = 5
+    ):
         self._base = base
         self._maximum_time = maximum_time
         self._maximum_tries = maximum_tries
@@ -53,7 +59,7 @@ class Backoff:
         self._last_wait: float = 0
 
     def calculate(self) -> float:
-        exponent = min((self._retries ** 2), self._maximum_time)
+        exponent = min((self._retries**2), self._maximum_time)
         wait = self._rand(0, (self._base * 2) * exponent)
 
         if wait <= self._last_wait:

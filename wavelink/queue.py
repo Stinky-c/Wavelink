@@ -39,7 +39,7 @@ from typing import (
 )
 
 from . import abc
-from .errors import *
+from .errors import QueueFull, QueueEmpty
 from .types.queue import Queue as QueueBase
 
 __all__ = (

@@ -30,18 +30,18 @@ import aiohttp
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--java', action='store_true')
+parser.add_argument("--java", action="store_true")
 
 args = parser.parse_args()
 get_java = args.java
 
 
-RELEASES = 'https://api.github.com/repos/freyacodes/Lavalink/releases/latest'
-JAVA = 'https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe'
+RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases/latest"
+JAVA = "https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe"
 
 
-if get_java and sys.platform != 'win32':
-    raise RuntimeError('Downloading and installing Java is only supported on Windows.')
+if get_java and sys.platform != "win32":
+    raise RuntimeError("Downloading and installing Java is only supported on Windows.")
 
 if get_java:
     import ctypes
@@ -53,8 +53,10 @@ if get_java:
         is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
 
     if not is_admin:
-        raise RuntimeError('This script requires administrator privileges to install Java.\n'
-                           'Please restart the script in Command Prompt or Powershell as an administrator.')
+        raise RuntimeError(
+            "This script requires administrator privileges to install Java.\n"
+            "Please restart the script in Command Prompt or Powershell as an administrator."
+        )
 
 
 _application_yml = """
@@ -118,13 +120,13 @@ async def download(location: pathlib.Path, *, url: str) -> None:
             if url == RELEASES:
 
                 data = await head_resp.json()
-                assets = data['assets']
+                assets = data["assets"]
 
                 for asset in assets:
-                    if asset['name'] == 'Lavalink.jar':
+                    if asset["name"] == "Lavalink.jar":
 
-                        length = asset['size']
-                        lavalink = asset['browser_download_url']
+                        length = asset["size"]
+                        lavalink = asset["browser_download_url"]
                         chunks = round(length / 1024)
                         break
             else:
@@ -132,23 +134,25 @@ async def download(location: pathlib.Path, *, url: str) -> None:
                 chunks = round(length / 1024)
 
         if lavalink:
-            file = 'Lavalink.jar'
+            file = "Lavalink.jar"
             url = lavalink
         else:
-            file = 'java17.exe'
+            file = "java17.exe"
 
         async with session.get(url=url) as resp:
-            with open(f'{location.absolute()}/{file}', 'wb') as fp:
+            with open(f"{location.absolute()}/{file}", "wb") as fp:
                 count = 1
 
                 async for chunk in resp.content.iter_chunked(1024):
                     x = int(40 * count / chunks)
 
-                    print(f"\rDownloading {file}: [{u'█' * x}{('.' * (40 - x))}] "
-                          f"{count / 1024:.2f}/{chunks / 1024:.2f} MB",
-                          end='',
-                          file=sys.stdout,
-                          flush=True)
+                    print(
+                        f"\rDownloading {file}: [{u'█' * x}{('.' * (40 - x))}] "
+                        f"{count / 1024:.2f}/{chunks / 1024:.2f} MB",
+                        end="",
+                        file=sys.stdout,
+                        flush=True,
+                    )
 
                     fp.write(chunk)
                     count += 1
@@ -159,14 +163,21 @@ async def download(location: pathlib.Path, *, url: str) -> None:
 def parse_input(value: str, type_: typing.Any) -> typing.Union[str, int, bool, None]:
     value = str(value)
 
-    quits = ('q', 'quit', 'exit')
+    quits = ("q", "quit", "exit")
     if value.lower() in quits:
-        print('Exiting installer...')
+        print("Exiting installer...")
         sys.exit(0)
 
     if type_ is bool:
 
-        bools = {'y': True, 'yes': True, 'true': True, 'n': False, 'no': False, 'false': False}
+        bools = {
+            "y": True,
+            "yes": True,
+            "true": True,
+            "n": False,
+            "no": False,
+            "false": False,
+        }
         result = bools.get(value.lower(), None)
 
         return result
@@ -182,52 +193,80 @@ def parse_input(value: str, type_: typing.Any) -> typing.Union[str, int, bool, N
 async def main():
     cwd = pathlib.Path.cwd()
 
-    print('\nEnter Q at anytime to quit the installer...\n')
+    print("\nEnter Q at anytime to quit the installer...\n")
 
     while True:
         while True:
 
-            port = parse_input(input('Please enter the port number for Lavalink (Enter to use default: 2333): ')
-                               or 2333, int)
+            port = parse_input(
+                input(
+                    "Please enter the port number for Lavalink (Enter to use default: 2333): "
+                )
+                or 2333,
+                int,
+            )
 
             if not port:
-                print('Invalid port specified. Please enter a number for your port. Enter Q to quit.')
+                print(
+                    "Invalid port specified. Please enter a number for your port. Enter Q to quit."
+                )
                 continue
 
             break
 
         while True:
 
-            address = parse_input(input('Please enter the address to star Lavalink (Enter to use default: 0.0.0.0): ')
-                                  or '0.0.0.0', str)
+            address = parse_input(
+                input(
+                    "Please enter the address to star Lavalink (Enter to use default: 0.0.0.0): "
+                )
+                or "0.0.0.0",
+                str,
+            )
 
             if not address:
-                print('Invalid address specified. Please enter a valid binding IP address. Enter Q to quit.')
+                print(
+                    "Invalid address specified. Please enter a valid binding IP address. Enter Q to quit."
+                )
                 continue
 
             break
 
         while True:
 
-            password = parse_input(input('Please enter a password for Lavalink (Enter to use default:'
-                                         ' "youshallnotpass"): ')
-                                   or 'youshallnotpass', str)
+            password = parse_input(
+                input(
+                    "Please enter a password for Lavalink (Enter to use default:"
+                    ' "youshallnotpass"): '
+                )
+                or "youshallnotpass",
+                str,
+            )
 
             if not password:
-                print('Invalid password specified. Please enter a valid password. Enter Q to quit.')
+                print(
+                    "Invalid password specified. Please enter a valid password. Enter Q to quit."
+                )
                 continue
 
             break
 
         while True:
 
-            location = parse_input(input('Please enter a install directory. '
-                                         'An attempt to create the directory will be made if it does not not exist. '
-                                         f'(Enter to use the current directory: {cwd}): ')
-                                   or cwd, str)
+            location = parse_input(
+                input(
+                    "Please enter a install directory. "
+                    "An attempt to create the directory will be made if it does not not exist. "
+                    f"(Enter to use the current directory: {cwd}): "
+                )
+                or cwd,
+                str,
+            )
 
             if not location:
-                print('Invalid location specified. Please enter a valid directory. Enter Q to quit.')
+                print(
+                    "Invalid location specified. Please enter a valid directory. Enter Q to quit."
+                )
                 continue
 
             location = pathlib.Path(location)
@@ -235,16 +274,20 @@ async def main():
             break
 
         while True:
-            confirmed_ = parse_input(input('\nPlease confirm the following information:\n\n'
-                                           f'Port: {port}\nAddress:'
-                                           f' {address}\nPassword:'
-                                           f' "{password}"\nLocation:'
-                                           f' {location.absolute()}\n\n'
-                                           f'(Y: Confirm, N: Re-Enter, Q: Quit): '),
-                                     bool)
+            confirmed_ = parse_input(
+                input(
+                    "\nPlease confirm the following information:\n\n"
+                    f"Port: {port}\nAddress:"
+                    f" {address}\nPassword:"
+                    f' "{password}"\nLocation:'
+                    f" {location.absolute()}\n\n"
+                    f"(Y: Confirm, N: Re-Enter, Q: Quit): "
+                ),
+                bool,
+            )
 
             if confirmed_ is None:
-                print('Invalid response...')
+                print("Invalid response...")
                 continue
 
             break
@@ -256,29 +299,35 @@ async def main():
         try:
             location.mkdir(parents=True, exist_ok=False)
         except Exception as e:
-            print(f'Could not make directory: "{location.absolute()}". {e}\nExiting the installer...')
+            print(
+                f'Could not make directory: "{location.absolute()}". {e}\nExiting the installer...'
+            )
 
     await download(location=location, url=RELEASES)
-    print('Lavalink successfully downloaded...')
+    print("Lavalink successfully downloaded...")
 
-    with open(f'{location.absolute()}/application.yml', 'w') as fp:
+    with open(f"{location.absolute()}/application.yml", "w") as fp:
         fp.write(_application_yml.format(port=port, address=address, password=password))
 
     if get_java:
         await download(location=location, url=JAVA)
 
-        proc = await asyncio.subprocess.create_subprocess_exec(f'{location.absolute()}/java17.exe')
+        proc = await asyncio.subprocess.create_subprocess_exec(
+            f"{location.absolute()}/java17.exe"
+        )
         await proc.wait()
 
-    print(f'\nSuccess!\n\nDownload Location: {location.absolute()}\n\nInstructions:\n'
-          f'- Open a Powershell or Command Prompt\n'
-          f'- cd {location.absolute()}\n'
-          f'- java -jar Lavalink.jar\n\n'
-          f'To connect use the following details:\n'
-          f'Port     : {port}\n'
-          f'Password : "{password}"\n\n'
-          f'You may change these values by editing the application.yml\n')
+    print(
+        f"\nSuccess!\n\nDownload Location: {location.absolute()}\n\nInstructions:\n"
+        f"- Open a Powershell or Command Prompt\n"
+        f"- cd {location.absolute()}\n"
+        f"- java -jar Lavalink.jar\n\n"
+        f"To connect use the following details:\n"
+        f"Port     : {port}\n"
+        f'Password : "{password}"\n\n'
+        f"You may change these values by editing the application.yml\n"
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

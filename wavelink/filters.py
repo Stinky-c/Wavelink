@@ -44,7 +44,6 @@ __all__ = (
 
 
 class BaseFilter(abc.ABC):
-
     def __init__(self, name: Optional[str] = None) -> None:
         self.name: str = name or "Unknown"
 
@@ -69,15 +68,18 @@ class Equalizer(BaseFilter):
     """
 
     def __init__(
-        self,
-        name: str = "CustomEqualizer",
-        *,
-        bands: List[Tuple[int, float]]
+        self, name: str = "CustomEqualizer", *, bands: List[Tuple[int, float]]
     ) -> None:
         super().__init__(name=name)
 
-        if any((band, gain) for band, gain in bands if band < 0 or band > 15 or gain < -0.25 or gain > 1.0):
-            raise ValueError("Equalizer bands must be between 0 and 15 and gains between -0.25 and 1.0")
+        if any(
+            (band, gain)
+            for band, gain in bands
+            if band < 0 or band > 15 or gain < -0.25 or gain > 1.0
+        ):
+            raise ValueError(
+                "Equalizer bands must be between 0 and 15 and gains between -0.25 and 1.0"
+            )
 
         _dict = collections.defaultdict(float)
         _dict.update(bands)
@@ -96,9 +98,21 @@ class Equalizer(BaseFilter):
         """A flat equalizer."""
 
         bands = [
-            (0, 0.0), (1, 0.0), (2, 0.0), (3, 0.0), (4, 0.0),
-            (5, 0.0), (6, 0.0), (7, 0.0), (8, 0.0), (9, 0.0),
-            (10, 0.0), (11, 0.0), (12, 0.0), (13, 0.0), (14, 0.0)
+            (0, 0.0),
+            (1, 0.0),
+            (2, 0.0),
+            (3, 0.0),
+            (4, 0.0),
+            (5, 0.0),
+            (6, 0.0),
+            (7, 0.0),
+            (8, 0.0),
+            (9, 0.0),
+            (10, 0.0),
+            (11, 0.0),
+            (12, 0.0),
+            (13, 0.0),
+            (14, 0.0),
         ]
         return cls(name="Flat EQ", bands=bands)
 
@@ -107,9 +121,21 @@ class Equalizer(BaseFilter):
         """A boost equalizer."""
 
         bands = [
-            (0, -0.075), (1, 0.125), (2, 0.125), (3, 0.1), (4, 0.1),
-            (5, .05), (6, 0.075), (7, 0.0), (8, 0.0), (9, 0.0),
-            (10, 0.0), (11, 0.0), (12, 0.125), (13, 0.15), (14, 0.05)
+            (0, -0.075),
+            (1, 0.125),
+            (2, 0.125),
+            (3, 0.1),
+            (4, 0.1),
+            (5, 0.05),
+            (6, 0.075),
+            (7, 0.0),
+            (8, 0.0),
+            (9, 0.0),
+            (10, 0.0),
+            (11, 0.0),
+            (12, 0.125),
+            (13, 0.15),
+            (14, 0.05),
         ]
         return cls(name="Boost EQ", bands=bands)
 
@@ -118,9 +144,21 @@ class Equalizer(BaseFilter):
         """A metal equalizer."""
 
         bands = [
-            (0, 0.0), (1, 0.1), (2, 0.1), (3, 0.15), (4, 0.13),
-            (5, 0.1), (6, 0.0), (7, 0.125), (8, 0.175), (9, 0.175),
-            (10, 0.125), (11, 0.125), (12, 0.1), (13, 0.075), (14, 0.0)
+            (0, 0.0),
+            (1, 0.1),
+            (2, 0.1),
+            (3, 0.15),
+            (4, 0.13),
+            (5, 0.1),
+            (6, 0.0),
+            (7, 0.125),
+            (8, 0.175),
+            (9, 0.175),
+            (10, 0.125),
+            (11, 0.125),
+            (12, 0.1),
+            (13, 0.075),
+            (14, 0.0),
         ]
 
         return cls(name="Metal EQ", bands=bands)
@@ -130,9 +168,20 @@ class Equalizer(BaseFilter):
         """A piano equalizer."""
 
         bands = [
-            (0, -0.25), (1, -0.25), (2, -0.125), (3, 0.0),
-            (4, 0.25), (5, 0.25), (6, 0.0), (7, -0.25), (8, -0.25),
-            (9, 0.0), (10, 0.0), (11, 0.5), (12, 0.25), (13, -0.025)
+            (0, -0.25),
+            (1, -0.25),
+            (2, -0.125),
+            (3, 0.0),
+            (4, 0.25),
+            (5, 0.25),
+            (6, 0.0),
+            (7, -0.25),
+            (8, -0.25),
+            (9, 0.0),
+            (10, 0.0),
+            (11, 0.5),
+            (12, 0.25),
+            (13, -0.025),
         ]
         return cls(name="Piano EQ", bands=bands)
 
@@ -161,7 +210,7 @@ class Karaoke(BaseFilter):
         level: float = 1.0,
         mono_level: float = 1.0,
         filter_band: float = 220.0,
-        filter_width: float = 100.0
+        filter_width: float = 100.0,
     ) -> None:
         super().__init__(name="Karaoke")
 
@@ -171,16 +220,18 @@ class Karaoke(BaseFilter):
         self.filter_width: float = filter_width
 
     def __repr__(self) -> str:
-        return f"<wavelink.Karaoke level={self.level}, mono_level={self.mono_level}, " \
-               f"filter_band={self.filter_band}, filter_width={self.filter_width}>"
+        return (
+            f"<wavelink.Karaoke level={self.level}, mono_level={self.mono_level}, "
+            f"filter_band={self.filter_band}, filter_width={self.filter_width}>"
+        )
 
     @property
     def _payload(self) -> Dict[str, float]:
         return {
-            "level":       self.level,
-            "monoLevel":   self.mono_level,
-            "filterBand":  self.filter_band,
-            "filterWidth": self.filter_width
+            "level": self.level,
+            "monoLevel": self.mono_level,
+            "filterBand": self.filter_band,
+            "filterWidth": self.filter_width,
         }
 
 
@@ -230,7 +281,7 @@ class Timescale(BaseFilter):
         return {
             "speed": self.speed,
             "pitch": self.pitch,
-            "rate":  self.rate,
+            "rate": self.rate,
         }
 
 
@@ -249,17 +300,14 @@ class Tremolo(BaseFilter):
         How much the volume should change. Should be more than 0.0 and less than or equal to 1.0.
     """
 
-    def __init__(
-        self,
-        *,
-        frequency: float = 2.0,
-        depth: float = 0.5
-    ) -> None:
+    def __init__(self, *, frequency: float = 2.0, depth: float = 0.5) -> None:
 
         if frequency < 0:
             raise ValueError("'frequency' must be more than 0.0.")
         if not 0 < depth <= 1:
-            raise ValueError("'depth' must be more than 0.0 and less than or equal to 1.0.")
+            raise ValueError(
+                "'depth' must be more than 0.0 and less than or equal to 1.0."
+            )
 
         super().__init__(name="Tremolo")
 
@@ -271,10 +319,7 @@ class Tremolo(BaseFilter):
 
     @property
     def _payload(self) -> Dict[str, float]:
-        return {
-            "frequency": self.frequency,
-            "depth":     self.depth
-        }
+        return {"frequency": self.frequency, "depth": self.depth}
 
 
 class Vibrato(BaseFilter):
@@ -292,17 +337,16 @@ class Vibrato(BaseFilter):
         How much the pitch should change. Should be more than 0.0 and less than or equal to 1.0.
     """
 
-    def __init__(
-        self,
-        *,
-        frequency: float = 2.0,
-        depth: float = 0.5
-    ) -> None:
+    def __init__(self, *, frequency: float = 2.0, depth: float = 0.5) -> None:
 
         if not 0 < frequency <= 14:
-            raise ValueError("'frequency' must be more than 0.0 and less than or equal to 14.0.")
+            raise ValueError(
+                "'frequency' must be more than 0.0 and less than or equal to 14.0."
+            )
         if not 0 < depth <= 1:
-            raise ValueError("'depth' must be more than 0.0 and less than or equal to 1.0.")
+            raise ValueError(
+                "'depth' must be more than 0.0 and less than or equal to 1.0."
+            )
 
         super().__init__(name="Vibrato")
 
@@ -314,10 +358,7 @@ class Vibrato(BaseFilter):
 
     @property
     def _payload(self) -> Dict[str, float]:
-        return {
-            "frequency": self.frequency,
-            "depth":     self.depth
-        }
+        return {"frequency": self.frequency, "depth": self.depth}
 
 
 class Rotation(BaseFilter):
@@ -361,7 +402,7 @@ class Distortion(BaseFilter):
         tan_offset: float = 0.0,
         tan_scale: float = 1.0,
         offset: float = 0.0,
-        scale: float = 1.0
+        scale: float = 1.0,
     ) -> None:
         super().__init__(name="Distortion")
 
@@ -375,24 +416,26 @@ class Distortion(BaseFilter):
         self.scale: float = scale
 
     def __repr__(self) -> str:
-        return f"<wavelink.Distortion " \
-               f"sin_offset={self.sin_offset}, " \
-               f"sin_scale={self.sin_scale}, cos_offset={self.cos_offset}, " \
-               f"cos_scale={self.cos_scale}, tan_offset={self.tan_offset}, " \
-               f"tan_scale={self.tan_scale}, offset={self.offset}, " \
-               f"scale={self.scale}>"
+        return (
+            f"<wavelink.Distortion "
+            f"sin_offset={self.sin_offset}, "
+            f"sin_scale={self.sin_scale}, cos_offset={self.cos_offset}, "
+            f"cos_scale={self.cos_scale}, tan_offset={self.tan_offset}, "
+            f"tan_scale={self.tan_scale}, offset={self.offset}, "
+            f"scale={self.scale}>"
+        )
 
     @property
     def _payload(self) -> Dict[str, float]:
         return {
             "sinOffset": self.sin_offset,
-            "sinScale":  self.sin_scale,
+            "sinScale": self.sin_scale,
             "cosOffset": self.cos_offset,
-            "cosScale":  self.cos_scale,
+            "cosScale": self.cos_scale,
             "tanOffset": self.tan_offset,
-            "tanScale":  self.tan_scale,
-            "offset":    self.offset,
-            "scale":     self.scale
+            "tanScale": self.tan_scale,
+            "offset": self.offset,
+            "scale": self.scale,
         }
 
 
@@ -444,25 +487,29 @@ class ChannelMix(BaseFilter):
         self.right_to_left: float = right_to_left
 
     def __repr__(self) -> str:
-        return f"<wavelink.ChannelMix " \
-               f"left_to_left={self.left_to_left}, " \
-               f"right_to_right{self.right_to_right}, " \
-               f"left_to_right={self.left_to_right}, " \
-               f"right_to_left={self.right_to_left}>"
+        return (
+            f"<wavelink.ChannelMix "
+            f"left_to_left={self.left_to_left}, "
+            f"right_to_right{self.right_to_right}, "
+            f"left_to_right={self.left_to_right}, "
+            f"right_to_left={self.right_to_left}>"
+        )
 
     @property
     def _payload(self) -> Dict[str, float]:
         return {
-            "leftToLeft":   self.left_to_left,
-            "leftToRight":  self.left_to_right,
-            "rightToLeft":  self.right_to_left,
+            "leftToLeft": self.left_to_left,
+            "leftToRight": self.left_to_right,
+            "rightToLeft": self.right_to_left,
             "rightToRight": self.right_to_right,
         }
 
     @classmethod
     def mono(cls) -> ChannelMix:
         """Returns a ChannelMix filter that will play the track in mono."""
-        return cls(left_to_left=0.5, left_to_right=0.5, right_to_left=0.5, right_to_right=0.5)
+        return cls(
+            left_to_left=0.5, left_to_right=0.5, right_to_left=0.5, right_to_right=0.5
+        )
 
     @classmethod
     def only_left(cls) -> ChannelMix:
@@ -507,11 +554,7 @@ class LowPass(BaseFilter):
         The factor by which the filter will block higher frequencies.
     """
 
-    def __init__(
-        self,
-        *,
-        smoothing: float = 20
-    ) -> None:
+    def __init__(self, *, smoothing: float = 20) -> None:
         super().__init__(name="Low Pass")
 
         self.smoothing: float = smoothing
@@ -560,7 +603,8 @@ class Filter:
     def __init__(
         self,
         _filter: Optional[Filter] = None,
-        /, *,
+        /,
+        *,
         equalizer: Optional[Equalizer] = None,
         karaoke: Optional[Karaoke] = None,
         timescale: Optional[Timescale] = None,
@@ -569,7 +613,7 @@ class Filter:
         rotation: Optional[Rotation] = None,
         distortion: Optional[Distortion] = None,
         channel_mix: Optional[ChannelMix] = None,
-        low_pass: Optional[LowPass] = None
+        low_pass: Optional[LowPass] = None,
     ) -> None:
 
         self.filter: Optional[Filter] = _filter
@@ -585,10 +629,12 @@ class Filter:
         self.low_pass: Optional[LowPass] = low_pass
 
     def __repr__(self) -> str:
-        return f"<wavelink.Filter equalizer={self.equalizer}, " \
-               f"karaoke={self.karaoke}, timescale={self.timescale}, tremolo={self.tremolo}, " \
-               f"vibrato={self.vibrato}, rotation={self.rotation}, distortion={self.distortion}, " \
-               f"channel_mix={self.channel_mix}, low_pass={self.low_pass}>"
+        return (
+            f"<wavelink.Filter equalizer={self.equalizer}, "
+            f"karaoke={self.karaoke}, timescale={self.timescale}, tremolo={self.tremolo}, "
+            f"vibrato={self.vibrato}, rotation={self.rotation}, distortion={self.distortion}, "
+            f"channel_mix={self.channel_mix}, low_pass={self.low_pass}>"
+        )
 
     @property
     def _payload(self) -> Dict[str, Any]:
