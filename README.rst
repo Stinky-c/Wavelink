@@ -50,13 +50,13 @@ The following commands are currently the valid ways of installing WaveLink.
 
 .. code:: sh
 
-    py -3.9 -m pip install -U Wavelink
+    py -3.9 -m pip install -U git+https://github.com/Stinky-c/Wavelink.git
 
 **Linux**
 
 .. code:: sh
 
-    python3.9 -m pip install -U Wavelink
+    python3.9 -m pip install -U git+https://github.com/Stinky-c/Wavelink.git
 
 Getting Started
 ----------------------------
