@@ -69,7 +69,10 @@ class Playable(metaclass=abc.ABCMeta):
         self.id: str = id
         self.info: Dict[str, Any] = info
         self.length: float = info.get("length", 0) / 1000
-        self.duration: float = self.length
+
+    @property
+    def duration(self) -> float:
+        return self.length
 
 
 class Searchable(metaclass=abc.ABCMeta):
